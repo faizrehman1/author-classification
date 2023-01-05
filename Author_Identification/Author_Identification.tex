@@ -1,0 +1,1593 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Author\_Identification}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{n}{train\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{train\PYZhy{}authors.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{test\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{test\PYZhy{}authors.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{from} \PY{n+nn}{matplotlib} \PY{k+kn}{import} \PY{n}{pyplot} \PY{k}{as} \PY{n}{plt}
+\PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{train\PYZus{}data}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                                                text   author
+0   She wanted clothes to keep her warm, and food{\ldots}  dickens
+1   The question now was, who was the man,\textbackslash{}nand w{\ldots}    doyle
+2   I therefore\textbackslash{}n      smoked a great number of t{\ldots}    doyle
+3   I am partial to the modern\textbackslash{}nFrench school. \textbackslash{}n{\ldots}    doyle
+4  ” She stood smiling, holding up a little slip {\ldots}    doyle
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+defoe      7569
+dickens    7493
+twain      7478
+doyle      7460
+Name: author, dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{len}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{train\PYZus{}data}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_5_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{twain\PYZus{}train} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{twain}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{twain\PYZus{}train}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    7478.000000
+mean      309.776678
+std       135.313290
+min       200.000000
+25\%       231.000000
+50\%       272.000000
+75\%       340.000000
+max      3289.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{twain\PYZus{}train}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_7_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{defoe\PYZus{}train} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{defoe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{defoe\PYZus{}train}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    7569.000000
+mean      405.952041
+std       195.312379
+min       200.000000
+25\%       267.000000
+50\%       353.000000
+75\%       483.000000
+max      2249.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{defoe\PYZus{}train}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_9_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{doyle\PYZus{}train} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{doyle}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{doyle\PYZus{}train}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    7460.000000
+mean      266.766622
+std        58.795911
+min       200.000000
+25\%       224.000000
+50\%       251.000000
+75\%       294.000000
+max       787.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{doyle\PYZus{}train}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_11_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dickens\PYZus{}train} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dickens}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{dickens\PYZus{}train}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    7493.000000
+mean      288.498065
+std        99.546325
+min       200.000000
+25\%       225.000000
+50\%       260.000000
+75\%       321.000000
+max      3141.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dickens\PYZus{}train}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_13_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Similarly examine the text length \& distribution in test data}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{len}\PY{p}{(}\PY{p}{)}
+\PY{n}{test\PYZus{}data}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_15_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{twain\PYZus{}test} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{twain}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{twain\PYZus{}test}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    2522.000000
+mean      307.407613
+std       125.125268
+min         6.000000
+25\%       230.250000
+50\%       270.000000
+75\%       339.000000
+max      2494.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{twain\PYZus{}test}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{defoe\PYZus{}test} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{defoe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{defoe\PYZus{}test}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    2431.000000
+mean      400.674619
+std       189.809590
+min         6.000000
+25\%       262.000000
+50\%       346.000000
+75\%       484.500000
+max      1755.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{defoe\PYZus{}test}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_19_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{doyle\PYZus{}test} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{doyle}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{doyle\PYZus{}test}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    2540.000000
+mean      268.123622
+std        59.771638
+min       200.000000
+25\%       224.000000
+50\%       254.000000
+75\%       295.000000
+max       654.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{doyle\PYZus{}test}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_21_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dickens\PYZus{}test} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dickens}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{dickens\PYZus{}test}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    2507.000000
+mean      286.886318
+std        93.134536
+min         6.000000
+25\%       226.000000
+50\%       260.000000
+75\%       317.000000
+max      1541.000000
+Name: text\_length, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{dickens\PYZus{}test}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_23_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Some preprocessing of the target variable to facilitate
+modelling}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Encoding author label into numbers}
+\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author\PYZus{}num}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{o}{.}\PY{n}{author}\PY{o}{.}\PY{n}{map}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{twain}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{defoe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{doyle}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dickens}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{3}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{train\PYZus{}data}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                                                text   author  text\_length  \textbackslash{}
+0   She wanted clothes to keep her warm, and food{\ldots}  dickens          251
+1   The question now was, who was the man,\textbackslash{}nand w{\ldots}    doyle          208
+2   I therefore\textbackslash{}n      smoked a great number of t{\ldots}    doyle          444
+3   I am partial to the modern\textbackslash{}nFrench school. \textbackslash{}n{\ldots}    doyle          292
+4  ” She stood smiling, holding up a little slip {\ldots}    doyle          227
+
+   author\_num
+0           3
+1           2
+2           2
+3           2
+4           2
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Limiting all text length to 700 characters for both train and test for
+less outliers in data
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{train\PYZus{}data} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{original\PYZus{}text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{original\PYZus{}text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{700}\PY{p}{]}
+\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{len}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{test\PYZus{}data} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{original\PYZus{}text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{original\PYZus{}text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{700}\PY{p}{]}
+\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text\PYZus{}length}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{len}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \textbf{Define X and y from train data for use in tokenization by
+Vectorizers}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{train\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                                           original\_text   author  \textbackslash{}
+0       She wanted clothes to keep her warm, and food{\ldots}  dickens
+1       The question now was, who was the man,\textbackslash{}nand w{\ldots}    doyle
+2       I therefore\textbackslash{}n      smoked a great number of t{\ldots}    doyle
+3       I am partial to the modern\textbackslash{}nFrench school. \textbackslash{}n{\ldots}    doyle
+4      ” She stood smiling, holding up a little slip {\ldots}    doyle
+{\ldots}                                                  {\ldots}      {\ldots}
+29995   It ain't anything.  There ain't no harm in it{\ldots}    twain
+29996    In my\textbackslash{}nyouth the monarchs of England had cea{\ldots}    twain
+29997   Bob Sawyer nodded. \textbackslash{}n\textbackslash{}n‘So are you, sir,’ sai{\ldots}  dickens
+29998   He was out on the lawn, in through the window{\ldots}    doyle
+29999   “Here he is,” said he, sitting down and flatt{\ldots}    doyle
+
+       text\_length  author\_num  \textbackslash{}
+0              251           3
+1              208           2
+2              444           2
+3              292           2
+4              227           2
+{\ldots}            {\ldots}         {\ldots}
+29995          429           0
+29996          366           0
+29997          297           3
+29998          361           2
+29999          201           2
+
+                                                    text
+0       She wanted clothes to keep her warm, and food{\ldots}
+1       The question now was, who was the man,\textbackslash{}nand w{\ldots}
+2       I therefore\textbackslash{}n      smoked a great number of t{\ldots}
+3       I am partial to the modern\textbackslash{}nFrench school. \textbackslash{}n{\ldots}
+4      ” She stood smiling, holding up a little slip {\ldots}
+{\ldots}                                                  {\ldots}
+29995   It ain't anything.  There ain't no harm in it{\ldots}
+29996    In my\textbackslash{}nyouth the monarchs of England had cea{\ldots}
+29997   Bob Sawyer nodded. \textbackslash{}n\textbackslash{}n‘So are you, sir,’ sai{\ldots}
+29998   He was out on the lawn, in through the window{\ldots}
+29999   “Here he is,” said he, sitting down and flatt{\ldots}
+
+[30000 rows x 5 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{test\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                                          original\_text   author  text\_length  \textbackslash{}
+0      Carton,” said the man of business.  “Good nig{\ldots}  dickens          214
+1      \_Is taken, and\textbackslash{}nhow\_, 154.  \_Tried, condemned{\ldots}    defoe          237
+2      Through a cousin who\textbackslash{}n      works with Gelder{\ldots}    doyle          207
+3     \textbackslash{}n\textbackslash{}nIndeed, nothing was more strange than to s{\ldots}    defoe          282
+4     \textbackslash{}n\textbackslash{}nOn the rocks above the present city of Alt{\ldots}    twain          318
+{\ldots}                                                 {\ldots}      {\ldots}          {\ldots}
+9995   I was very glad to\textbackslash{}nsee her too, and, after a{\ldots}  dickens          365
+9996   “And yet we manage to make ourselves fairly h{\ldots}    doyle          205
+9997   ‘Why, here they are. ’\textbackslash{}n\textbackslash{}n‘No, no; I mean the{\ldots}  dickens          249
+9998  ”\textbackslash{}n\textbackslash{}n“Was Peter Wilks well off?”\textbackslash{}n\textbackslash{}n“Oh, yes, {\ldots}    twain          225
+9999  \textbackslash{}n\textbackslash{}n‘Shall I go away, aunt?’ I asked, tremblin{\ldots}  dickens          214
+
+                                                   text
+0      Carton,” said the man of business.  “Good nig{\ldots}
+1      \_Is taken, and\textbackslash{}nhow\_, 154.  \_Tried, condemned{\ldots}
+2      Through a cousin who\textbackslash{}n      works with Gelder{\ldots}
+3     \textbackslash{}n\textbackslash{}nIndeed, nothing was more strange than to s{\ldots}
+4     \textbackslash{}n\textbackslash{}nOn the rocks above the present city of Alt{\ldots}
+{\ldots}                                                 {\ldots}
+9995   I was very glad to\textbackslash{}nsee her too, and, after a{\ldots}
+9996   “And yet we manage to make ourselves fairly h{\ldots}
+9997   ‘Why, here they are. ’\textbackslash{}n\textbackslash{}n‘No, no; I mean the{\ldots}
+9998  ”\textbackslash{}n\textbackslash{}n“Was Peter Wilks well off?”\textbackslash{}n\textbackslash{}n“Oh, yes, {\ldots}
+9999  \textbackslash{}n\textbackslash{}n‘Shall I go away, aunt?’ I asked, tremblin{\ldots}
+
+[10000 rows x 4 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{y} \PY{o}{=} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{author\PYZus{}num}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \textbf{Split train data into a training and a test se}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{123}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{n}{y\PYZus{}test}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+(24000,) (24000,) (6000,) (6000,)
+    \end{Verbatim}
+
+    Examine the class distribution in y\_train and y\_test
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y\PYZus{}test}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+1    6087
+3    5996
+2    5962
+0    5955
+Name: author\_num, dtype: int64
+ 0    1523
+2    1498
+3    1497
+1    1482
+Name: author\_num, dtype: int64
+    \end{Verbatim}
+
+    \textbf{Vectorize the data using Vectorizer}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{feature\PYZus{}extraction}\PY{n+nn}{.}\PY{n+nn}{text} \PY{k+kn}{import} \PY{n}{CountVectorizer}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{feature\PYZus{}extraction}\PY{n+nn}{.}\PY{n+nn}{text} \PY{k+kn}{import} \PY{n}{TfidfVectorizer}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{vect} \PY{o}{=} \PY{n}{CountVectorizer}\PY{p}{(}\PY{n}{lowercase}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{token\PYZus{}pattern}\PY{o}{=}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?u)}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{b}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{w+}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{b|}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{,|}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{.|}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{;|}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{vect}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+CountVectorizer(lowercase=False, token\_pattern='(?u)\textbackslash{}\textbackslash{}b\textbackslash{}\textbackslash{}w+\textbackslash{}\textbackslash{}b|\textbackslash{}\textbackslash{},|\textbackslash{}\textbackslash{}.|\textbackslash{}\textbackslash{};|\textbackslash{}\textbackslash{}:')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Learn the vocabulary in the training data, then use it to create a
+document-term matrix
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X\PYZus{}train\PYZus{}dtm} \PY{o}{=} \PY{n}{vect}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Examine the document-term matrix created from X\_train
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}dtm}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+  (0, 5237)     3
+  (0, 36190)    1
+  (0, 39461)    2
+  (0, 0)        5
+  (0, 32712)    1
+  (0, 36212)    1
+  (0, 39463)    1
+  (0, 26868)    1
+  (0, 32387)    1
+  (0, 13647)    3
+  (0, 30931)    1
+  (0, 28586)    1
+  (0, 23975)    2
+  (0, 28869)    1
+  (0, 1)        4
+  (0, 11058)    1
+  (0, 23674)    2
+  (0, 22834)    1
+  (0, 27099)    1
+  (0, 22363)    1
+  (0, 26331)    1
+  (0, 24118)    1
+  (0, 33452)    1
+  (0, 16422)    1
+  (0, 19762)    1
+  :     :
+  (23999, 36236)        1
+  (23999, 20944)        1
+  (23999, 38860)        1
+  (23999, 21128)        1
+  (23999, 35895)        1
+  (23999, 25748)        1
+  (23999, 36235)        1
+  (23999, 34918)        1
+  (23999, 17682)        1
+  (23999, 29765)        1
+  (23999, 31392)        1
+  (23999, 25865)        1
+  (23999, 38342)        1
+  (23999, 13408)        1
+  (23999, 6043) 1
+  (23999, 21110)        1
+  (23999, 34251)        1
+  (23999, 29237)        1
+  (23999, 32855)        1
+  (23999, 19964)        1
+  (23999, 1553) 2
+  (23999, 29844)        1
+  (23999, 7130) 1
+  (23999, 23885)        1
+  (23999, 8166) 1
+    \end{Verbatim}
+
+    Transform the test data using the earlier fitted vocabulary, into a
+document-term matrix
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X\PYZus{}test\PYZus{}dtm} \PY{o}{=} \PY{n}{vect}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Examine the document-term matrix from X\_test
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}dtm}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+  (0, 0)        5
+  (0, 1)        4
+  (0, 1835)     1
+  (0, 3436)     1
+  (0, 5237)     3
+  (0, 6883)     2
+  (0, 6884)     1
+  (0, 9403)     1
+  (0, 12598)    1
+  (0, 13016)    1
+  (0, 13524)    1
+  (0, 13528)    1
+  (0, 13827)    1
+  (0, 15964)    1
+  (0, 17218)    1
+  (0, 23491)    1
+  (0, 23674)    2
+  (0, 23945)    1
+  (0, 26177)    1
+  (0, 27099)    1
+  (0, 27919)    1
+  (0, 28315)    1
+  (0, 28860)    1
+  (0, 32712)    1
+  (0, 35855)    1
+  :     :
+  (5999, 26261) 1
+  (5999, 26463) 1
+  (5999, 26636) 1
+  (5999, 27099) 1
+  (5999, 27671) 1
+  (5999, 28390) 1
+  (5999, 28509) 1
+  (5999, 29976) 1
+  (5999, 30330) 1
+  (5999, 33507) 3
+  (5999, 33611) 1
+  (5999, 36075) 1
+  (5999, 36117) 1
+  (5999, 36189) 1
+  (5999, 36204) 1
+  (5999, 36212) 2
+  (5999, 36333) 1
+  (5999, 36360) 1
+  (5999, 36600) 2
+  (5999, 38626) 1
+  (5999, 38860) 1
+  (5999, 38867) 1
+  (5999, 39025) 1
+  (5999, 39445) 1
+  (5999, 39468) 2
+    \end{Verbatim}
+
+    \textbf{Add character counts as a features to the sparse matrix using
+function add\_feature}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{add\PYZus{}feature}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{feature\PYZus{}to\PYZus{}add}\PY{p}{)}\PY{p}{:}
+    \PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{sparse} \PY{k+kn}{import} \PY{n}{csr\PYZus{}matrix}\PY{p}{,} \PY{n}{hstack}
+    \PY{k}{return} \PY{n}{hstack}\PY{p}{(}\PY{p}{[}\PY{n}{X}\PY{p}{,} \PY{n}{csr\PYZus{}matrix}\PY{p}{(}\PY{n}{feature\PYZus{}to\PYZus{}add}\PY{p}{)}\PY{o}{.}\PY{n}{T}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{csr}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{39}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{string} \PY{k+kn}{import} \PY{n}{punctuation}
+\PY{n}{X\PYZus{}train\PYZus{}chars} \PY{o}{=} \PY{n}{X\PYZus{}train}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{len}\PY{p}{(}\PY{p}{)}
+\PY{n}{X\PYZus{}train\PYZus{}punc} \PY{o}{=} \PY{n}{X\PYZus{}train}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{p}{[}\PY{n}{c} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n+nb}{str}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{k}{if} \PY{n}{c} \PY{o+ow}{in} \PY{n}{punctuation}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\PY{n}{X\PYZus{}test\PYZus{}chars} \PY{o}{=} \PY{n}{X\PYZus{}test}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{len}\PY{p}{(}\PY{p}{)}
+\PY{n}{X\PYZus{}test\PYZus{}punc} \PY{o}{=} \PY{n}{X\PYZus{}test}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{p}{[}\PY{n}{c} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n+nb}{str}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{k}{if} \PY{n}{c} \PY{o+ow}{in} \PY{n}{punctuation}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\PY{n}{X\PYZus{}train\PYZus{}dtm} \PY{o}{=} \PY{n}{add\PYZus{}feature}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}dtm}\PY{p}{,} \PY{p}{[}\PY{n}{X\PYZus{}train\PYZus{}chars}\PY{p}{,} \PY{n}{X\PYZus{}train\PYZus{}punc}\PY{p}{]}\PY{p}{)}
+\PY{n}{X\PYZus{}test\PYZus{}dtm} \PY{o}{=} \PY{n}{add\PYZus{}feature}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}dtm}\PY{p}{,} \PY{p}{[}\PY{n}{X\PYZus{}test\PYZus{}chars}\PY{p}{,} \PY{n}{X\PYZus{}test\PYZus{}punc}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{40}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}dtm}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+  (0, 0)        5
+  (0, 1)        4
+  (0, 4930)     1
+  (0, 5237)     3
+  (0, 10684)    1
+  (0, 11058)    1
+  (0, 13261)    1
+  (0, 13465)    1
+  (0, 13647)    3
+  (0, 14073)    1
+  (0, 14220)    1
+  (0, 16281)    1
+  (0, 16422)    1
+  (0, 19762)    1
+  (0, 21439)    1
+  (0, 22363)    1
+  (0, 22834)    1
+  (0, 23422)    1
+  (0, 23512)    1
+  (0, 23674)    2
+  (0, 23704)    1
+  (0, 23975)    2
+  (0, 24118)    1
+  (0, 26047)    1
+  (0, 26177)    1
+  :     :
+  (23999, 28509)        1
+  (23999, 28586)        1
+  (23999, 28758)        1
+  (23999, 28777)        1
+  (23999, 29237)        1
+  (23999, 29765)        1
+  (23999, 29844)        1
+  (23999, 31392)        1
+  (23999, 32855)        1
+  (23999, 34251)        1
+  (23999, 34918)        1
+  (23999, 35895)        1
+  (23999, 36212)        1
+  (23999, 36228)        3
+  (23999, 36230)        1
+  (23999, 36235)        1
+  (23999, 36236)        1
+  (23999, 36274)        1
+  (23999, 36531)        1
+  (23999, 38342)        1
+  (23999, 38860)        1
+  (23999, 38966)        2
+  (23999, 39461)        1
+  (23999, 39503)        347
+  (23999, 39504)        5
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{41}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}dtm}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+  (0, 0)        5
+  (0, 1)        4
+  (0, 1835)     1
+  (0, 3436)     1
+  (0, 5237)     3
+  (0, 6883)     2
+  (0, 6884)     1
+  (0, 9403)     1
+  (0, 12598)    1
+  (0, 13016)    1
+  (0, 13524)    1
+  (0, 13528)    1
+  (0, 13827)    1
+  (0, 15964)    1
+  (0, 17218)    1
+  (0, 23491)    1
+  (0, 23674)    2
+  (0, 23945)    1
+  (0, 26177)    1
+  (0, 27099)    1
+  (0, 27919)    1
+  (0, 28315)    1
+  (0, 28860)    1
+  (0, 32712)    1
+  (0, 35855)    1
+  :     :
+  (5999, 26636) 1
+  (5999, 27099) 1
+  (5999, 27671) 1
+  (5999, 28390) 1
+  (5999, 28509) 1
+  (5999, 29976) 1
+  (5999, 30330) 1
+  (5999, 33507) 3
+  (5999, 33611) 1
+  (5999, 36075) 1
+  (5999, 36117) 1
+  (5999, 36189) 1
+  (5999, 36204) 1
+  (5999, 36212) 2
+  (5999, 36333) 1
+  (5999, 36360) 1
+  (5999, 36600) 2
+  (5999, 38626) 1
+  (5999, 38860) 1
+  (5999, 38867) 1
+  (5999, 39025) 1
+  (5999, 39445) 1
+  (5999, 39468) 2
+  (5999, 39503) 288
+  (5999, 39504) 7
+    \end{Verbatim}
+
+    \textbf{Build and evaluate an author classification model using
+Multinomial Naive Bayes}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{42}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{naive\PYZus{}bayes} \PY{k+kn}{import} \PY{n}{MultinomialNB}
+\PY{n}{nb} \PY{o}{=} \PY{n}{MultinomialNB}\PY{p}{(}\PY{p}{)}
+\PY{n}{nb}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{42}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+MultinomialNB()
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Tune hyperparameter alpha = {[}0.01, 0.1, 1, 10, 100{]}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{43}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{GridSearchCV}
+\PY{n}{grid\PYZus{}values} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{alpha}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{0.01}\PY{p}{,} \PY{l+m+mf}{0.1}\PY{p}{,} \PY{l+m+mf}{1.0}\PY{p}{,} \PY{l+m+mf}{10.0}\PY{p}{,} \PY{l+m+mf}{100.0}\PY{p}{]}\PY{p}{\PYZcb{}}
+\PY{n}{grid\PYZus{}nb} \PY{o}{=} \PY{n}{GridSearchCV}\PY{p}{(}\PY{n}{nb}\PY{p}{,} \PY{n}{param\PYZus{}grid}\PY{o}{=}\PY{n}{grid\PYZus{}values}\PY{p}{,} \PY{n}{scoring}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{neg\PYZus{}log\PYZus{}loss}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{grid\PYZus{}nb}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}dtm}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{grid\PYZus{}nb}\PY{o}{.}\PY{n}{best\PYZus{}params\PYZus{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{43}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\{'alpha': 1.0\}
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Set with recommended hyperparameters
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{44}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{nb} \PY{o}{=} \PY{n}{MultinomialNB}\PY{p}{(}\PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{1.0}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Train the model using X\_train\_dtm \& y\_train
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{nb}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}dtm}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+MultinomialNB()
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Make author predictions for X\_test\_dtm
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{46}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}pred\PYZus{}test} \PY{o}{=} \PY{n}{nb}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}dtm}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Accuracy
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{47}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn} \PY{k+kn}{import} \PY{n}{metrics}
+\PY{n}{metrics}\PY{o}{.}\PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{47}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0.9261666666666667
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \textbf{F1 score}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{48}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{classification\PYZus{}report}
+\PY{n}{report} \PY{o}{=} \PY{n}{classification\PYZus{}report}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{report}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+              precision    recall  f1-score   support
+
+           0       0.93      0.90      0.91      1523
+           1       0.94      0.97      0.95      1482
+           2       0.93      0.94      0.94      1498
+           3       0.92      0.90      0.91      1497
+
+    accuracy                           0.93      6000
+   macro avg       0.93      0.93      0.93      6000
+weighted avg       0.93      0.93      0.93      6000
+
+    \end{Verbatim}
+
+    Compute the accuracy of training data predictions
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{49}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}pred\PYZus{}train} \PY{o}{=} \PY{n}{nb}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}dtm}\PY{p}{)}
+\PY{n}{metrics}\PY{o}{.}\PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{49}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0.9587083333333334
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Look at the confusion matrix for y\_test
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{50}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{metrics}\PY{o}{.}\PY{n}{confusion\PYZus{}matrix}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{50}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+array([[1371,   46,   50,   56],
+       [  12, 1432,    8,   30],
+       [  31,   15, 1414,   38],
+       [  67,   37,   53, 1340]], dtype=int64)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Calculate predicted probabilities for X\_test\_dtm
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{51}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}pred\PYZus{}prob} \PY{o}{=} \PY{n}{nb}\PY{o}{.}\PY{n}{predict\PYZus{}proba}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}dtm}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}prob}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{51}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+array([[1.75701289e-12, 5.62686466e-18, 1.15173981e-09, 9.99999999e-01],
+       [2.05188323e-09, 5.75150351e-13, 3.08776118e-06, 9.99996910e-01],
+       [2.93878431e-01, 1.10697485e-05, 2.79557848e-04, 7.05830941e-01],
+       [9.61738619e-01, 4.92103725e-08, 3.82613049e-02, 2.70085307e-08],
+       [2.34526393e-06, 3.89169584e-08, 3.19793403e-07, 9.99997296e-01],
+       [9.99328736e-01, 4.16798946e-07, 6.66253151e-04, 4.59382505e-06],
+       [9.06365827e-08, 1.42241346e-04, 9.99836445e-01, 2.12234778e-05],
+       [9.63120868e-09, 9.99999577e-01, 1.91982529e-08, 3.94366738e-07],
+       [2.49280811e-19, 2.40764063e-17, 1.22969696e-08, 9.99999988e-01],
+       [7.19508098e-09, 1.74787994e-10, 9.96407122e-01, 3.59287109e-03]])
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Compute the log loss number
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{52}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{metrics}\PY{o}{.}\PY{n}{log\PYZus{}loss}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}prob}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{52}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0.32429446190320216
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{53}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{test} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} transform the test data using the earlier fitted vocabulary, into a document\PYZhy{}term matrix}
+\PY{n}{test\PYZus{}dtm} \PY{o}{=} \PY{n}{vect}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{n}{test}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} examine the document\PYZhy{}term matrix from X\PYZus{}test}
+\PY{n}{test\PYZus{}dtm}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{53}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<10000x39503 sparse matrix of type '<class 'numpy.int64'>'
+        with 463465 stored elements in Compressed Sparse Row format>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{test\PYZus{}chars} \PY{o}{=} \PY{n}{test}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{len}\PY{p}{(}\PY{p}{)}
+\PY{n}{test\PYZus{}punc} \PY{o}{=} \PY{n}{test}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{W}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{test\PYZus{}dtm} \PY{o}{=} \PY{n}{add\PYZus{}feature}\PY{p}{(}\PY{n}{test\PYZus{}dtm}\PY{p}{,} \PY{p}{[}\PY{n}{test\PYZus{}chars}\PY{p}{,} \PY{n}{test\PYZus{}punc}\PY{p}{]}\PY{p}{)}
+\PY{n}{test\PYZus{}dtm}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<10000x39505 sparse matrix of type '<class 'numpy.int64'>'
+        with 483465 stored elements in Compressed Sparse Row format>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{55}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{NB\PYZus{}y\PYZus{}pred} \PY{o}{=} \PY{n}{nb}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{test\PYZus{}dtm}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{NB\PYZus{}y\PYZus{}pred}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[3 1 0 {\ldots} 3 0 3]
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{56}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{NB\PYZus{}y\PYZus{}pred\PYZus{}prob} \PY{o}{=} \PY{n}{nb}\PY{o}{.}\PY{n}{predict\PYZus{}proba}\PY{p}{(}\PY{n}{test\PYZus{}dtm}\PY{p}{)}
+\PY{n}{NB\PYZus{}y\PYZus{}pred\PYZus{}prob}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{56}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+array([[1.14323576e-07, 5.19415896e-14, 2.66765160e-11, 9.99999886e-01],
+       [1.57537590e-23, 1.00000000e+00, 1.29594645e-27, 1.28732480e-20],
+       [8.13708962e-01, 1.58019702e-01, 2.51053415e-03, 2.57608013e-02],
+       [1.06970687e-08, 9.99999779e-01, 2.15308600e-15, 2.10712891e-07],
+       [9.99999999e-01, 8.71917762e-10, 2.46155020e-11, 3.05540480e-11],
+       [7.10211074e-09, 9.99999993e-01, 9.44439407e-27, 2.02373928e-10],
+       [1.35406099e-07, 2.77606748e-07, 9.99551625e-01, 4.47961669e-04],
+       [4.51392973e-11, 1.01613453e-10, 1.72908678e-12, 1.00000000e+00],
+       [7.82381656e-13, 9.28101475e-20, 5.12265002e-17, 1.00000000e+00],
+       [8.89002582e-01, 1.20911512e-08, 1.95103863e-07, 1.10997211e-01]])
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{57}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{result} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{NB\PYZus{}y\PYZus{}pred\PYZus{}prob}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{defoe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dickens}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{twain}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{doyle}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{result}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{57}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+          defoe       dickens         twain         doyle
+0  1.143236e-07  5.194159e-14  2.667652e-11  9.999999e-01
+1  1.575376e-23  1.000000e+00  1.295946e-27  1.287325e-20
+2  8.137090e-01  1.580197e-01  2.510534e-03  2.576080e-02
+3  1.069707e-08  9.999998e-01  2.153086e-15  2.107129e-07
+4  1.000000e+00  8.719178e-10  2.461550e-11  3.055405e-11
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
